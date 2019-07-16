@@ -164,7 +164,8 @@ class WP_Widget {
 		$this->name            = $name;
 		$this->option_name     = 'widget_' . $this->id_base;
 		$this->widget_options  = wp_parse_args(
-			$widget_options, array(
+			$widget_options,
+			array(
 				'classname'                   => $this->option_name,
 				'customize_selective_refresh' => false,
 			)
@@ -205,7 +206,8 @@ class WP_Widget {
 	 * @return string Name attribute for $field_name
 	 */
 	public function get_field_name( $field_name ) {
-		if ( false === $pos = strpos( $field_name, '[' ) ) {
+		$pos = strpos( $field_name, '[' );
+		if ( false === $pos ) {
 			return 'widget-' . $this->id_base . '[' . $this->number . '][' . $field_name . ']';
 		} else {
 			return 'widget-' . $this->id_base . '[' . $this->number . '][' . substr_replace( $field_name, '][', $pos, strlen( '[' ) );

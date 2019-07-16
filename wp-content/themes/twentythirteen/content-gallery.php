@@ -25,6 +25,7 @@
 			/* translators: %s: Name of current post */
 			the_content(
 				sprintf(
+					/* translators: post title */
 					__( 'Continue reading %s <span class="meta-nav">&rarr;</span>', 'twentythirteen' ),
 					the_title( '<span class="screen-reader-text">', '</span>', false )
 				)
@@ -38,7 +39,7 @@
 					'link_after'  => '</span>',
 				)
 			);
-		?>
+			?>
 		<?php else : ?>
 			<?php echo get_post_gallery(); ?>
 		<?php endif; // is_single() ?>

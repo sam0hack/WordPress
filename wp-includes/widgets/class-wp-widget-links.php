@@ -126,7 +126,8 @@ class WP_Widget_Links extends WP_Widget {
 
 		//Defaults
 		$instance  = wp_parse_args(
-			(array) $instance, array(
+			(array) $instance,
+			array(
 				'images'      => true,
 				'name'        => true,
 				'description' => false,
@@ -137,10 +138,11 @@ class WP_Widget_Links extends WP_Widget {
 			)
 		);
 		$link_cats = get_terms( 'link_category' );
-		if ( ! $limit = intval( $instance['limit'] ) ) {
+		$limit     = intval( $instance['limit'] );
+		if ( ! $limit ) {
 			$limit = -1;
 		}
-			?>
+		?>
 		<p>
 		<label for="<?php echo $this->get_field_id( 'category' ); ?>"><?php _e( 'Select Link Category:' ); ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id( 'category' ); ?>" name="<?php echo $this->get_field_name( 'category' ); ?>">

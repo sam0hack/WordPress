@@ -91,7 +91,7 @@ if ( isset( $_GET['action'] ) ) {
 			echo '<p>' . __( 'Plugin failed to reactivate due to a fatal error.' ) . '</p>';
 
 			error_reporting( E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_ERROR | E_WARNING | E_PARSE | E_USER_ERROR | E_USER_WARNING | E_RECOVERABLE_ERROR );
-			@ini_set( 'display_errors', true ); //Ensure that Fatal errors are displayed.
+			ini_set( 'display_errors', true ); //Ensure that Fatal errors are displayed.
 			wp_register_plugin_realpath( WP_PLUGIN_DIR . '/' . $plugin );
 			include( WP_PLUGIN_DIR . '/' . $plugin );
 		}
@@ -106,7 +106,8 @@ if ( isset( $_GET['action'] ) ) {
 
 		check_admin_referer( 'install-plugin_' . $plugin );
 		$api = plugins_api(
-			'plugin_information', array(
+			'plugin_information',
+			array(
 				'slug'   => $plugin,
 				'fields' => array(
 					'sections' => false,
@@ -225,7 +226,8 @@ if ( isset( $_GET['action'] ) ) {
 
 		check_admin_referer( 'install-theme_' . $theme );
 		$api = themes_api(
-			'theme_information', array(
+			'theme_information',
+			array(
 				'slug'   => $theme,
 				'fields' => array(
 					'sections' => false,
@@ -293,6 +295,6 @@ if ( isset( $_GET['action'] ) ) {
 		 *
 		 * @since 2.8.0
 		 */
-		do_action( "update-custom_{$action}" );
+		do_action( "update-custom_{$action}" ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 	}
 }

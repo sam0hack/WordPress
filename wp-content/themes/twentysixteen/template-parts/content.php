@@ -23,9 +23,9 @@
 
 	<div class="entry-content">
 		<?php
-			/* translators: %s: Name of current post */
 			the_content(
 				sprintf(
+					/* translators: %s: Name of current post */
 					__( 'Continue reading<span class="screen-reader-text"> "%s"</span>', 'twentysixteen' ),
 					get_the_title()
 				)
@@ -41,7 +41,7 @@
 					'separator'   => '<span class="screen-reader-text">, </span>',
 				)
 			);
-		?>
+			?>
 	</div><!-- .entry-content -->
 
 	<footer class="entry-footer">
@@ -56,6 +56,6 @@
 				'<span class="edit-link">',
 				'</span>'
 			);
-		?>
+			?>
 	</footer><!-- .entry-footer -->
-</article><!-- #post-## -->
+</article><!-- #post-<?php the_ID(); ?> -->

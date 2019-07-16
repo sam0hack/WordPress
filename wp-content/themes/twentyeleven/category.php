@@ -17,6 +17,7 @@ get_header(); ?>
 				<header class="page-header">
 					<h1 class="page-title">
 					<?php
+						/* translators: %s: category title */
 						printf( __( 'Category Archives: %s', 'twentyeleven' ), '<span>' . single_cat_title( '', false ) . '</span>' );
 					?>
 					</h1>
@@ -42,7 +43,7 @@ get_header(); ?>
 				<?php
 				while ( have_posts() ) :
 					the_post();
-?>
+					?>
 
 					<?php
 						/*

@@ -97,7 +97,7 @@ class WP_Http_Streams {
 			 * Filters whether SSL should be verified for local requests.
 			 *
 			 * @since 2.8.0
-			 * @since 5.0.0 The `$url` parameter was added.
+			 * @since 5.1.0 The `$url` parameter was added.
 			 *
 			 * @param bool   $ssl_verify Whether to verify the SSL connection. Default true.
 			 * @param string $url        The request URL.
@@ -140,8 +140,10 @@ class WP_Http_Streams {
 			}
 
 			if ( $proxy->is_enabled() && $proxy->send_through_proxy( $url ) ) {
+				// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 				$handle = @stream_socket_client( 'tcp://' . $proxy->host() . ':' . $proxy->port(), $connection_error, $connection_error_str, $connect_timeout, STREAM_CLIENT_CONNECT, $context );
 			} else {
+				// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 				$handle = @stream_socket_client( $connect_host . ':' . $arrURL['port'], $connection_error, $connection_error_str, $connect_timeout, STREAM_CLIENT_CONNECT, $context );
 			}
 
@@ -249,8 +251,9 @@ class WP_Http_Streams {
 			}
 			if ( ! $stream_handle ) {
 				return new WP_Error(
-					'http_request_failed', sprintf(
-						/* translators: 1: fopen() 2: file name */
+					'http_request_failed',
+					sprintf(
+						/* translators: 1: fopen(), 2: file name */
 						__( 'Could not open handle for %1$s to %2$s.' ),
 						'fopen()',
 						$r['filename']
@@ -325,7 +328,8 @@ class WP_Http_Streams {
 		);
 
 		// Handle redirects.
-		if ( false !== ( $redirect_response = WP_Http::handle_redirects( $url, $r, $response ) ) ) {
+		$redirect_response = WP_Http::handle_redirects( $url, $r, $response );
+		if ( false !== $redirect_response ) {
 			return $redirect_response;
 		}
 

@@ -189,8 +189,9 @@ class WP_Http_Curl {
 			}
 			if ( ! $this->stream_handle ) {
 				return new WP_Error(
-					'http_request_failed', sprintf(
-						/* translators: 1: fopen() 2: file name */
+					'http_request_failed',
+					sprintf(
+						/* translators: 1: fopen(), 2: file name */
 						__( 'Could not open handle for %1$s to %2$s.' ),
 						'fopen()',
 						$r['filename']
@@ -234,7 +235,8 @@ class WP_Http_Curl {
 		if ( ! $r['blocking'] ) {
 			curl_exec( $handle );
 
-			if ( $curl_error = curl_error( $handle ) ) {
+			$curl_error = curl_error( $handle );
+			if ( $curl_error ) {
 				curl_close( $handle );
 				return new WP_Error( 'http_request_failed', $curl_error );
 			}
@@ -280,7 +282,8 @@ class WP_Http_Curl {
 					}
 				}
 			} else {
-				if ( $curl_error = curl_error( $handle ) ) {
+				$curl_error = curl_error( $handle );
+				if ( $curl_error ) {
 					curl_close( $handle );
 					return new WP_Error( 'http_request_failed', $curl_error );
 				}
@@ -306,7 +309,8 @@ class WP_Http_Curl {
 		);
 
 		// Handle redirects.
-		if ( false !== ( $redirect_response = WP_HTTP::handle_redirects( $url, $r, $response ) ) ) {
+		$redirect_response = WP_HTTP::handle_redirects( $url, $r, $response );
+		if ( false !== $redirect_response ) {
 			return $redirect_response;
 		}
 

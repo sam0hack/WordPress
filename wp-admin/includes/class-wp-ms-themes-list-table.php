@@ -97,7 +97,7 @@ class WP_MS_Themes_List_Table extends WP_List_Table {
 			 *
 			 * @since 3.1.0
 			 *
-			 * @param array $all An array of WP_Theme objects to display in the list table.
+			 * @param WP_Theme[] $all Array of WP_Theme objects to display in the list table.
 			 */
 			'all'      => apply_filters( 'all_themes', wp_get_themes() ),
 			'search'   => array(),
@@ -115,7 +115,8 @@ class WP_MS_Themes_List_Table extends WP_List_Table {
 			$allowed_where   = 'network';
 		}
 
-		$maybe_update = current_user_can( 'update_themes' ) && ! $this->is_site_themes && $current = get_site_transient( 'update_themes' );
+		$current      = get_site_transient( 'update_themes' );
+		$maybe_update = current_user_can( 'update_themes' ) && ! $this->is_site_themes && $current;
 
 		foreach ( (array) $themes['all'] as $key => $theme ) {
 			if ( $this->is_site_themes && $theme->is_allowed( 'network' ) ) {
@@ -153,7 +154,9 @@ class WP_MS_Themes_List_Table extends WP_List_Table {
 		$total_this_page = $totals[ $status ];
 
 		wp_localize_script(
-			'updates', '_wpUpdatesItemCounts', array(
+			'updates',
+			'_wpUpdatesItemCounts',
+			array(
 				'themes' => $totals,
 				'totals' => wp_get_update_data(),
 			)
@@ -300,16 +303,16 @@ class WP_MS_Themes_List_Table extends WP_List_Table {
 					$text = _nx( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $count, 'themes' );
 					break;
 				case 'enabled':
-					$text = _n( 'Enabled <span class="count">(%s)</span>', 'Enabled <span class="count">(%s)</span>', $count );
+					$text = _nx( 'Enabled <span class="count">(%s)</span>', 'Enabled <span class="count">(%s)</span>', $count, 'themes' );
 					break;
 				case 'disabled':
-					$text = _n( 'Disabled <span class="count">(%s)</span>', 'Disabled <span class="count">(%s)</span>', $count );
+					$text = _nx( 'Disabled <span class="count">(%s)</span>', 'Disabled <span class="count">(%s)</span>', $count, 'themes' );
 					break;
 				case 'upgrade':
-					$text = _n( 'Update Available <span class="count">(%s)</span>', 'Update Available <span class="count">(%s)</span>', $count );
+					$text = _nx( 'Update Available <span class="count">(%s)</span>', 'Update Available <span class="count">(%s)</span>', $count, 'themes' );
 					break;
 				case 'broken':
-					$text = _n( 'Broken <span class="count">(%s)</span>', 'Broken <span class="count">(%s)</span>', $count );
+					$text = _nx( 'Broken <span class="count">(%s)</span>', 'Broken <span class="count">(%s)</span>', $count, 'themes' );
 					break;
 			}
 
@@ -423,7 +426,8 @@ class WP_MS_Themes_List_Table extends WP_List_Table {
 						'theme'  => $theme_key,
 						'paged'  => $page,
 						's'      => $s,
-					), $url
+					),
+					$url
 				);
 
 				if ( $this->is_site_themes ) {
@@ -448,7 +452,8 @@ class WP_MS_Themes_List_Table extends WP_List_Table {
 					'theme'  => $theme_key,
 					'paged'  => $page,
 					's'      => $s,
-				), $url
+				),
+				$url
 			);
 
 			if ( $this->is_site_themes ) {
@@ -475,7 +480,8 @@ class WP_MS_Themes_List_Table extends WP_List_Table {
 					'theme_status' => $context,
 					'paged'        => $page,
 					's'            => $s,
-				), 'themes.php'
+				),
+				'themes.php'
 			);
 
 			/* translators: %s: theme name */
@@ -506,7 +512,7 @@ class WP_MS_Themes_List_Table extends WP_List_Table {
 		 *
 		 * @since 2.8.0
 		 *
-		 * @param array    $actions An array of action links.
+		 * @param string[] $actions An array of action links.
 		 * @param WP_Theme $theme   The current WP_Theme object.
 		 * @param string   $context Status of the theme, one of 'all', 'enabled', or 'disabled'.
 		 */
@@ -522,7 +528,7 @@ class WP_MS_Themes_List_Table extends WP_List_Table {
 		 *
 		 * @since 3.1.0
 		 *
-		 * @param array    $actions An array of action links.
+		 * @param string[] $actions An array of action links.
 		 * @param WP_Theme $theme   The current WP_Theme object.
 		 * @param string   $context Status of the theme, one of 'all', 'enabled', or 'disabled'.
 		 */
@@ -587,7 +593,7 @@ class WP_MS_Themes_List_Table extends WP_List_Table {
 		 *
 		 * @since 3.1.0
 		 *
-		 * @param array    $theme_meta An array of the theme's metadata,
+		 * @param string[] $theme_meta An array of the theme's metadata,
 		 *                             including the version, author, and
 		 *                             theme URI.
 		 * @param string   $stylesheet Directory name of the theme.

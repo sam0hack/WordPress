@@ -496,8 +496,8 @@ function send_origin_headers() {
 	$origin = get_http_origin();
 
 	if ( is_allowed_http_origin( $origin ) ) {
-		@header( 'Access-Control-Allow-Origin: ' . $origin );
-		@header( 'Access-Control-Allow-Credentials: true' );
+		header( 'Access-Control-Allow-Origin: ' . $origin );
+		header( 'Access-Control-Allow-Credentials: true' );
 		if ( 'OPTIONS' === $_SERVER['REQUEST_METHOD'] ) {
 			exit;
 		}
@@ -543,7 +543,7 @@ function wp_http_validate_url( $url ) {
 	$parsed_home = @parse_url( get_option( 'home' ) );
 
 	if ( isset( $parsed_home['host'] ) ) {
-		$same_host = ( strtolower( $parsed_home['host'] ) === strtolower( $parsed_url['host'] ) || 'localhost' === strtolower( $parsed_url['host'] ) );
+		$same_host = strtolower( $parsed_home['host'] ) === strtolower( $parsed_url['host'] );
 	} else {
 		$same_host = false;
 	}

@@ -42,7 +42,8 @@ function get_categories( $args = '' ) {
 	// Back compat
 	if ( isset( $args['type'] ) && 'link' == $args['type'] ) {
 		_deprecated_argument(
-			__FUNCTION__, '3.0.0',
+			__FUNCTION__,
+			'3.0.0',
 			/* translators: 1: "type => link", 2: "taxonomy => link_category" */
 			sprintf(
 				__( '%1$s is deprecated. Use %2$s instead.' ),
@@ -50,7 +51,8 @@ function get_categories( $args = '' ) {
 				'<code>taxonomy => link_category</code>'
 			)
 		);
-		$taxonomy = $args['taxonomy'] = 'link_category';
+		$taxonomy         = 'link_category';
+		$args['taxonomy'] = $taxonomy;
 	}
 
 	$categories = get_terms( $taxonomy, $args );
@@ -134,7 +136,8 @@ function get_category_by_path( $category_path, $full_match = true, $output = OBJ
 		$full_path .= ( $pathdir != '' ? '/' : '' ) . sanitize_title( $pathdir );
 	}
 	$categories = get_terms(
-		'category', array(
+		'category',
+		array(
 			'get'  => 'all',
 			'slug' => $leaf_path,
 		)
@@ -195,7 +198,7 @@ function get_category_by_slug( $slug ) {
  * @param string $cat_name Category name.
  * @return int 0, if failure and ID of category on success.
  */
-function get_cat_ID( $cat_name ) {
+function get_cat_ID( $cat_name ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
 	$cat = get_term_by( 'name', $cat_name, 'category' );
 	if ( $cat ) {
 		return $cat->term_id;
@@ -273,7 +276,7 @@ function sanitize_category_field( $field, $value, $cat_id, $context ) {
  * @see get_terms() For list of arguments to pass.
  *
  * @param string|array $args Tag arguments to use when retrieving tags.
- * @return array List of tags.
+ * @return WP_Term[]|int $tags Array of 'post_tag' term objects, or a count thereof.
  */
 function get_tags( $args = '' ) {
 	$tags = get_terms( 'post_tag', $args );
@@ -288,8 +291,8 @@ function get_tags( $args = '' ) {
 	 *
 	 * @since 2.3.0
 	 *
-	 * @param array $tags Array of 'post_tag' term objects.
-	 * @param array $args An array of arguments. @see get_terms()
+	 * @param WP_Term[]|int $tags Array of 'post_tag' term objects, or a count thereof.
+	 * @param array         $args An array of arguments. @see get_terms()
 	 */
 	$tags = apply_filters( 'get_tags', $tags, $args );
 	return $tags;

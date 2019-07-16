@@ -100,9 +100,9 @@ class WP_Links_List_Table extends WP_List_Table {
 		if ( 'top' != $which ) {
 			return;
 		}
-?>
+		?>
 		<div class="alignleft actions">
-<?php
+		<?php
 			$dropdown_options = array(
 				'selected'        => $cat_id,
 				'name'            => 'cat_id',
@@ -117,9 +117,9 @@ class WP_Links_List_Table extends WP_List_Table {
 			echo '<label class="screen-reader-text" for="cat_id">' . __( 'Filter by category' ) . '</label>';
 			wp_dropdown_categories( $dropdown_options );
 			submit_button( __( 'Filter' ), '', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
-?>
+		?>
 		</div>
-<?php
+		<?php
 	}
 
 	/**
@@ -169,7 +169,9 @@ class WP_Links_List_Table extends WP_List_Table {
 	 */
 	public function column_cb( $link ) {
 		?>
-		<label class="screen-reader-text" for="cb-select-<?php echo $link->link_id; ?>"><?php echo sprintf( __( 'Select %s' ), $link->link_name ); ?></label>
+		<label class="screen-reader-text" for="cb-select-<?php echo $link->link_id; ?>">
+			<?php printf( __( 'Select %s' ), $link->link_name ); ?>
+		</label>
 		<input type="checkbox" name="linkcheck[]" id="cb-select-<?php echo $link->link_id; ?>" value="<?php echo esc_attr( $link->link_id ); ?>" />
 		<?php
 	}
@@ -293,11 +295,11 @@ class WP_Links_List_Table extends WP_List_Table {
 			$link                = sanitize_bookmark( $link );
 			$link->link_name     = esc_attr( $link->link_name );
 			$link->link_category = wp_get_link_cats( $link->link_id );
-?>
+			?>
 		<tr id="link-<?php echo $link->link_id; ?>">
 			<?php $this->single_row_columns( $link ); ?>
 		</tr>
-<?php
+			<?php
 		}
 	}
 

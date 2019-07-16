@@ -34,11 +34,14 @@ function get_bookmark( $bookmark, $output = OBJECT, $filter = 'raw' ) {
 	} else {
 		if ( isset( $GLOBALS['link'] ) && ( $GLOBALS['link']->link_id == $bookmark ) ) {
 			$_bookmark = & $GLOBALS['link'];
-		} elseif ( ! $_bookmark = wp_cache_get( $bookmark, 'bookmark' ) ) {
-			$_bookmark = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->links WHERE link_id = %d LIMIT 1", $bookmark ) );
-			if ( $_bookmark ) {
-				$_bookmark->link_category = array_unique( wp_get_object_terms( $_bookmark->link_id, 'link_category', array( 'fields' => 'ids' ) ) );
-				wp_cache_add( $_bookmark->link_id, $_bookmark, 'bookmark' );
+		} else {
+			$_bookmark = wp_cache_get( $bookmark, 'bookmark' );
+			if ( ! $_bookmark ) {
+				$_bookmark = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->links WHERE link_id = %d LIMIT 1", $bookmark ) );
+				if ( $_bookmark ) {
+					$_bookmark->link_category = array_unique( wp_get_object_terms( $_bookmark->link_id, 'link_category', array( 'fields' => 'ids' ) ) );
+					wp_cache_add( $_bookmark->link_id, $_bookmark, 'bookmark' );
+				}
 			}
 		}
 	}
@@ -139,8 +142,8 @@ function get_bookmarks( $args = '' ) {
 	$r = wp_parse_args( $args, $defaults );
 
 	$key   = md5( serialize( $r ) );
-	$cache = false;
-	if ( 'rand' !== $r['orderby'] && $cache = wp_cache_get( 'get_bookmarks', 'bookmark' ) ) {
+	$cache = wp_cache_get( 'get_bookmarks', 'bookmark' );
+	if ( 'rand' !== $r['orderby'] && $cache ) {
 		if ( is_array( $cache ) && isset( $cache[ $key ] ) ) {
 			$bookmarks = $cache[ $key ];
 			/**
@@ -171,13 +174,13 @@ function get_bookmarks( $args = '' ) {
 		$r['exclude']       = '';  //ignore exclude, category, and category_name params if using include
 		$r['category']      = '';
 		$r['category_name'] = '';
-		$inclinks           = preg_split( '/[\s,]+/', $r['include'] );
+		$inclinks           = wp_parse_id_list( $r['include'] );
 		if ( count( $inclinks ) ) {
 			foreach ( $inclinks as $inclink ) {
 				if ( empty( $inclusions ) ) {
-					$inclusions = ' AND ( link_id = ' . intval( $inclink ) . ' ';
+					$inclusions = ' AND ( link_id = ' . $inclink . ' ';
 				} else {
-					$inclusions .= ' OR link_id = ' . intval( $inclink ) . ' ';
+					$inclusions .= ' OR link_id = ' . $inclink . ' ';
 				}
 			}
 		}
@@ -188,13 +191,13 @@ function get_bookmarks( $args = '' ) {
 
 	$exclusions = '';
 	if ( ! empty( $r['exclude'] ) ) {
-		$exlinks = preg_split( '/[\s,]+/', $r['exclude'] );
+		$exlinks = wp_parse_id_list( $r['exclude'] );
 		if ( count( $exlinks ) ) {
 			foreach ( $exlinks as $exlink ) {
 				if ( empty( $exclusions ) ) {
-					$exclusions = ' AND ( link_id <> ' . intval( $exlink ) . ' ';
+					$exclusions = ' AND ( link_id <> ' . $exlink . ' ';
 				} else {
-					$exclusions .= ' AND link_id <> ' . intval( $exlink ) . ' ';
+					$exclusions .= ' AND link_id <> ' . $exlink . ' ';
 				}
 			}
 		}
@@ -204,7 +207,8 @@ function get_bookmarks( $args = '' ) {
 	}
 
 	if ( ! empty( $r['category_name'] ) ) {
-		if ( $r['category'] = get_term_by( 'name', $r['category_name'], 'link_category' ) ) {
+		$r['category'] = get_term_by( 'name', $r['category_name'], 'link_category' );
+		if ( $r['category'] ) {
 			$r['category'] = $r['category']->term_id;
 		} else {
 			$cache[ $key ] = array();
@@ -223,13 +227,13 @@ function get_bookmarks( $args = '' ) {
 	$category_query = '';
 	$join           = '';
 	if ( ! empty( $r['category'] ) ) {
-		$incategories = preg_split( '/[\s,]+/', $r['category'] );
+		$incategories = wp_parse_id_list( $r['category'] );
 		if ( count( $incategories ) ) {
 			foreach ( $incategories as $incat ) {
 				if ( empty( $category_query ) ) {
-					$category_query = ' AND ( tt.term_id = ' . intval( $incat ) . ' ';
+					$category_query = ' AND ( tt.term_id = ' . $incat . ' ';
 				} else {
-					$category_query .= ' OR tt.term_id = ' . intval( $incat ) . ' ';
+					$category_query .= ' OR tt.term_id = ' . $incat . ' ';
 				}
 			}
 		}

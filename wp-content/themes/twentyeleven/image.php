@@ -31,6 +31,7 @@ get_header(); ?>
 								<?php
 									$metadata = wp_get_attachment_metadata();
 									printf(
+										/* translators: 1: time, 2: date, 3: image permalink, 4: image width, 5: image height, 6: parent permalink, 7: parent post title, 8: parent post title */
 										__( '<span class="meta-prep meta-prep-entry-date">Published </span> <span class="entry-date"><abbr class="published" title="%1$s">%2$s</abbr></span> at <a href="%3$s" title="Link to full-size image">%4$s &times; %5$s</a> in <a href="%6$s" title="Return to %7$s" rel="gallery">%8$s</a>', 'twentyeleven' ),
 										esc_attr( get_the_time() ),
 										get_the_date(),
@@ -51,43 +52,43 @@ get_header(); ?>
 
 							<div class="entry-attachment">
 								<div class="attachment">
-<?php
-	/*
-	 * Grab the IDs of all the image attachments in a gallery so we can get the URL of the next adjacent image in a gallery,
-	 * or the first image (if we're looking at the last image in a gallery), or, in a gallery of one, just the link to that image file
-	 */
-	$attachments = array_values(
-		get_children(
-			array(
-				'post_parent'    => $post->post_parent,
-				'post_status'    => 'inherit',
-				'post_type'      => 'attachment',
-				'post_mime_type' => 'image',
-				'order'          => 'ASC',
-				'orderby'        => 'menu_order ID',
-			)
-		)
-	);
-foreach ( $attachments as $k => $attachment ) {
-	if ( $attachment->ID == $post->ID ) {
-		break;
-	}
-}
+				<?php
+				/*
+				* Grab the IDs of all the image attachments in a gallery so we can get the URL of the next adjacent image in a gallery,
+				* or the first image (if we're looking at the last image in a gallery), or, in a gallery of one, just the link to that image file
+				*/
+				$attachments = array_values(
+					get_children(
+						array(
+							'post_parent'    => $post->post_parent,
+							'post_status'    => 'inherit',
+							'post_type'      => 'attachment',
+							'post_mime_type' => 'image',
+							'order'          => 'ASC',
+							'orderby'        => 'menu_order ID',
+						)
+					)
+				);
+				foreach ( $attachments as $k => $attachment ) {
+					if ( $attachment->ID == $post->ID ) {
+						break;
+					}
+				}
 
-	// If there is more than 1 attachment in a gallery
-if ( count( $attachments ) > 1 ) {
-	$k++;
-	if ( isset( $attachments[ $k ] ) ) {
-		// get the URL of the next image attachment
-		$next_attachment_url = get_attachment_link( $attachments[ $k ]->ID );
-	} else {      // or get the URL of the first image attachment
-		$next_attachment_url = get_attachment_link( $attachments[0]->ID );
-	}
-} else {
-	// or, if there's only 1 image, get the URL of the image
-	$next_attachment_url = wp_get_attachment_url();
-}
-?>
+				// If there is more than 1 attachment in a gallery
+				if ( count( $attachments ) > 1 ) {
+					$k++;
+					if ( isset( $attachments[ $k ] ) ) {
+						// get the URL of the next image attachment
+						$next_attachment_url = get_attachment_link( $attachments[ $k ]->ID );
+					} else {      // or get the URL of the first image attachment
+						$next_attachment_url = get_attachment_link( $attachments[0]->ID );
+					}
+				} else {
+					// or, if there's only 1 image, get the URL of the image
+					$next_attachment_url = wp_get_attachment_url();
+				}
+				?>
 									<a href="<?php echo esc_url( $next_attachment_url ); ?>" title="<?php the_title_attribute(); ?>" rel="attachment">
 														<?php
 														/**
@@ -99,7 +100,7 @@ if ( count( $attachments ) > 1 ) {
 														 */
 														$attachment_size = apply_filters( 'twentyeleven_attachment_size', 848 );
 														echo wp_get_attachment_image( $post->ID, array( $attachment_size, 1024 ) ); // filterable image width with 1024px limit for image height.
-									?>
+														?>
 									</a>
 
 									<?php if ( ! empty( $post->post_excerpt ) ) : ?>
@@ -120,7 +121,7 @@ if ( count( $attachments ) > 1 ) {
 										'after'  => '</div>',
 									)
 								);
-?>
+								?>
 							</div><!-- .entry-description -->
 
 						</div><!-- .entry-content -->

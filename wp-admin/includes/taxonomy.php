@@ -53,7 +53,8 @@ function get_category_to_edit( $id ) {
  * @return int|WP_Error
  */
 function wp_create_category( $cat_name, $parent = 0 ) {
-	if ( $id = category_exists( $cat_name, $parent ) ) {
+	$id = category_exists( $cat_name, $parent );
+	if ( $id ) {
 		return $id;
 	}
 
@@ -70,17 +71,21 @@ function wp_create_category( $cat_name, $parent = 0 ) {
  *
  * @since 2.0.0
  *
- * @param array $categories List of categories to create.
- * @param int   $post_id    Optional. The post ID. Default empty.
+ * @param string[] $categories Array of category names to create.
+ * @param int      $post_id    Optional. The post ID. Default empty.
  * @return array List of categories to create for the given post.
  */
 function wp_create_categories( $categories, $post_id = '' ) {
 	$cat_ids = array();
 	foreach ( $categories as $category ) {
-		if ( $id = category_exists( $category ) ) {
+		$id = category_exists( $category );
+		if ( $id ) {
 			$cat_ids[] = $id;
-		} elseif ( $id = wp_create_category( $category ) ) {
-			$cat_ids[] = $id;
+		} else {
+			$id = wp_create_category( $category );
+			if ( $id ) {
+				$cat_ids[] = $id;
+			}
 		}
 	}
 
@@ -282,8 +287,8 @@ function get_terms_to_edit( $post_id, $taxonomy = 'post_tag' ) {
 	 *
 	 * @see get_terms_to_edit()
 	 *
-	 * @param array  $terms_to_edit An array of terms.
-	 * @param string $taxonomy     The taxonomy for which to retrieve terms. Default 'post_tag'.
+	 * @param string $terms_to_edit A comma-separated list of term names.
+	 * @param string $taxonomy      The taxonomy name for which to retrieve terms.
 	 */
 	$terms_to_edit = apply_filters( 'terms_to_edit', $terms_to_edit, $taxonomy );
 
@@ -300,7 +305,8 @@ function get_terms_to_edit( $post_id, $taxonomy = 'post_tag' ) {
  * @return array|WP_Error
  */
 function wp_create_term( $tag_name, $taxonomy = 'post_tag' ) {
-	if ( $id = term_exists( $tag_name, $taxonomy ) ) {
+	$id = term_exists( $tag_name, $taxonomy );
+	if ( $id ) {
 		return $id;
 	}
 

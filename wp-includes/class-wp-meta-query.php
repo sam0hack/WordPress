@@ -99,7 +99,7 @@ class WP_Meta_Query {
 	 *
 	 * @since 3.2.0
 	 * @since 4.2.0 Introduced support for naming query clauses by associative array keys.
-	 * @since 5.0.0 Introduced $compare_key clause parameter, which enables LIKE key matches.
+	 * @since 5.1.0 Introduced $compare_key clause parameter, which enables LIKE key matches.
 	 *
 	 * @param array $meta_query {
 	 *     Array of meta query clauses. When first-order clauses or sub-clauses use strings as
@@ -312,7 +312,8 @@ class WP_Meta_Query {
 	 * }
 	 */
 	public function get_sql( $type, $primary_table, $primary_id_column, $context = null ) {
-		if ( ! $meta_table = _get_meta_table( $type ) ) {
+		$meta_table = _get_meta_table( $type );
+		if ( ! $meta_table ) {
 			return false;
 		}
 
@@ -339,7 +340,7 @@ class WP_Meta_Query {
 		 *
 		 * @since 3.1.0
 		 *
-		 * @param array  $clauses           Array containing the query's JOIN and WHERE clauses.
+		 * @param array  $sql               Array containing the query's JOIN and WHERE clauses.
 		 * @param array  $queries           Array of meta queries.
 		 * @param string $type              Type of meta.
 		 * @param string $primary_table     Primary table.
@@ -498,7 +499,8 @@ class WP_Meta_Query {
 		}
 
 		if ( ! in_array(
-			$clause['compare'], array(
+			$clause['compare'],
+			array(
 				'=',
 				'!=',
 				'>',
@@ -621,8 +623,7 @@ class WP_Meta_Query {
 
 				case 'BETWEEN':
 				case 'NOT BETWEEN':
-					$meta_value = array_slice( $meta_value, 0, 2 );
-					$where      = $wpdb->prepare( '%s AND %s', $meta_value );
+					$where = $wpdb->prepare( '%s AND %s', $meta_value[0], $meta_value[1] );
 					break;
 
 				case 'LIKE':

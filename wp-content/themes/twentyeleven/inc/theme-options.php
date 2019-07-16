@@ -119,7 +119,7 @@ function twentyeleven_theme_options_help() {
 
 	$sidebar = '<p><strong>' . __( 'For more information:', 'twentyeleven' ) . '</strong></p>' .
 		'<p>' . __( '<a href="https://codex.wordpress.org/Appearance_Theme_Options_Screen" target="_blank">Documentation on Theme Options</a>', 'twentyeleven' ) . '</p>' .
-		'<p>' . __( '<a href="https://wordpress.org/support/" target="_blank">Support Forums</a>', 'twentyeleven' ) . '</p>';
+		'<p>' . __( '<a href="https://wordpress.org/support/" target="_blank">Support</a>', 'twentyeleven' ) . '</p>';
 
 	$screen = get_current_screen();
 
@@ -274,7 +274,7 @@ function twentyeleven_settings_field_color_scheme() {
 	$options = twentyeleven_get_theme_options();
 
 	foreach ( twentyeleven_color_schemes() as $scheme ) {
-	?>
+		?>
 	<div class="layout image-radio-option color-scheme">
 	<label class="description">
 		<input type="radio" name="twentyeleven_theme_options[color_scheme]" value="<?php echo esc_attr( $scheme['value'] ); ?>" <?php checked( $options['color_scheme'], $scheme['value'] ); ?> />
@@ -285,7 +285,7 @@ function twentyeleven_settings_field_color_scheme() {
 		</span>
 	</label>
 	</div>
-	<?php
+		<?php
 	}
 }
 
@@ -302,7 +302,12 @@ function twentyeleven_settings_field_link_color() {
 	<input type="button" class="pickcolor button hide-if-no-js" value="<?php esc_attr_e( 'Select a Color', 'twentyeleven' ); ?>" />
 	<div id="colorPickerDiv" style="z-index: 100; background:#eee; border:1px solid #ccc; position:absolute; display:none;"></div>
 	<br />
-	<span><?php printf( __( 'Default color: %s', 'twentyeleven' ), '<span id="default-color">' . twentyeleven_get_default_link_color( $options['color_scheme'] ) . '</span>' ); ?></span>
+	<span>
+	<?php
+	/* translators: link color */
+	printf( __( 'Default color: %s', 'twentyeleven' ), '<span id="default-color">' . twentyeleven_get_default_link_color( $options['color_scheme'] ) . '</span>' );
+	?>
+	</span>
 	<?php
 }
 
@@ -338,7 +343,12 @@ function twentyeleven_theme_options_render_page() {
 	<div class="wrap">
 		<?php screen_icon(); ?>
 		<?php $theme_name = function_exists( 'wp_get_theme' ) ? wp_get_theme() : get_current_theme(); ?>
-		<h2><?php printf( __( '%s Theme Options', 'twentyeleven' ), $theme_name ); ?></h2>
+		<h2>
+		<?php
+		/* translators: theme name */
+		printf( __( '%s Theme Options', 'twentyeleven' ), $theme_name );
+		?>
+		</h2>
 		<?php settings_errors(); ?>
 
 		<form method="post" action="options.php">
@@ -365,7 +375,8 @@ function twentyeleven_theme_options_render_page() {
  * @param array $input An array of form input.
  */
 function twentyeleven_theme_options_validate( $input ) {
-	$output = $defaults = twentyeleven_get_default_theme_options();
+	$defaults = twentyeleven_get_default_theme_options();
+	$output   = $defaults;
 
 	// Color scheme must be in our array of color scheme options
 	if ( isset( $input['color_scheme'] ) && array_key_exists( $input['color_scheme'], twentyeleven_color_schemes() ) ) {
@@ -373,7 +384,8 @@ function twentyeleven_theme_options_validate( $input ) {
 	}
 
 	// Our defaults for the link color may have changed, based on the color scheme.
-	$output['link_color'] = $defaults['link_color'] = twentyeleven_get_default_link_color( $output['color_scheme'] );
+	$defaults['link_color'] = twentyeleven_get_default_link_color( $output['color_scheme'] );
+	$output['link_color']   = $defaults['link_color'];
 
 	// Link color must be 3 or 6 hexadecimal characters
 	if ( isset( $input['link_color'] ) && preg_match( '/^#?([a-f0-9]{3}){1,2}$/i', $input['link_color'] ) ) {
@@ -438,7 +450,7 @@ function twentyeleven_print_link_color_style() {
 	if ( $default_options['link_color'] == $link_color ) {
 		return;
 	}
-?>
+	?>
 	<style>
 		/* Link color */
 		a,
@@ -466,7 +478,7 @@ function twentyeleven_print_link_color_style() {
 			background-color: <?php echo $link_color; ?>;
 		}
 	</style>
-<?php
+	<?php
 }
 add_action( 'wp_head', 'twentyeleven_print_link_color_style' );
 
@@ -523,14 +535,16 @@ function twentyeleven_customize_register( $wp_customize ) {
 
 	if ( isset( $wp_customize->selective_refresh ) ) {
 		$wp_customize->selective_refresh->add_partial(
-			'blogname', array(
+			'blogname',
+			array(
 				'selector'            => '#site-title a',
 				'container_inclusive' => false,
 				'render_callback'     => 'twentyeleven_customize_partial_blogname',
 			)
 		);
 		$wp_customize->selective_refresh->add_partial(
-			'blogdescription', array(
+			'blogdescription',
+			array(
 				'selector'            => '#site-description',
 				'container_inclusive' => false,
 				'render_callback'     => 'twentyeleven_customize_partial_blogdescription',
@@ -542,7 +556,8 @@ function twentyeleven_customize_register( $wp_customize ) {
 	$defaults = twentyeleven_get_default_theme_options();
 
 	$wp_customize->add_setting(
-		'twentyeleven_theme_options[color_scheme]', array(
+		'twentyeleven_theme_options[color_scheme]',
+		array(
 			'default'    => $defaults['color_scheme'],
 			'type'       => 'option',
 			'capability' => 'edit_theme_options',
@@ -556,7 +571,8 @@ function twentyeleven_customize_register( $wp_customize ) {
 	}
 
 	$wp_customize->add_control(
-		'twentyeleven_color_scheme', array(
+		'twentyeleven_color_scheme',
+		array(
 			'label'    => __( 'Color Scheme', 'twentyeleven' ),
 			'section'  => 'colors',
 			'settings' => 'twentyeleven_theme_options[color_scheme]',
@@ -568,7 +584,8 @@ function twentyeleven_customize_register( $wp_customize ) {
 
 	// Link Color (added to Color Scheme section in Customizer)
 	$wp_customize->add_setting(
-		'twentyeleven_theme_options[link_color]', array(
+		'twentyeleven_theme_options[link_color]',
+		array(
 			'default'           => twentyeleven_get_default_link_color( $options['color_scheme'] ),
 			'type'              => 'option',
 			'sanitize_callback' => 'sanitize_hex_color',
@@ -578,7 +595,9 @@ function twentyeleven_customize_register( $wp_customize ) {
 
 	$wp_customize->add_control(
 		new WP_Customize_Color_Control(
-			$wp_customize, 'link_color', array(
+			$wp_customize,
+			'link_color',
+			array(
 				'label'    => __( 'Link Color', 'twentyeleven' ),
 				'section'  => 'colors',
 				'settings' => 'twentyeleven_theme_options[link_color]',
@@ -588,14 +607,16 @@ function twentyeleven_customize_register( $wp_customize ) {
 
 	// Default Layout
 	$wp_customize->add_section(
-		'twentyeleven_layout', array(
+		'twentyeleven_layout',
+		array(
 			'title'    => __( 'Layout', 'twentyeleven' ),
 			'priority' => 50,
 		)
 	);
 
 	$wp_customize->add_setting(
-		'twentyeleven_theme_options[theme_layout]', array(
+		'twentyeleven_theme_options[theme_layout]',
+		array(
 			'type'              => 'option',
 			'default'           => $defaults['theme_layout'],
 			'sanitize_callback' => 'sanitize_key',
@@ -609,7 +630,8 @@ function twentyeleven_customize_register( $wp_customize ) {
 	}
 
 	$wp_customize->add_control(
-		'twentyeleven_theme_options[theme_layout]', array(
+		'twentyeleven_theme_options[theme_layout]',
+		array(
 			'section' => 'twentyeleven_layout',
 			'type'    => 'radio',
 			'choices' => $choices,

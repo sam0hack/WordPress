@@ -74,7 +74,8 @@ if ( get_option( 'db_upgraded' ) ) {
 		if ( $c <= 50 || ( $c > 50 && mt_rand( 0, (int) ( $c / 50 ) ) == 1 ) ) {
 			require_once( ABSPATH . WPINC . '/http.php' );
 			$response = wp_remote_get(
-				admin_url( 'upgrade.php?step=1' ), array(
+				admin_url( 'upgrade.php?step=1' ),
+				array(
 					'timeout'     => 120,
 					'httpversion' => '1.1',
 				)
@@ -173,7 +174,9 @@ if ( isset( $plugin_page ) ) {
 	} else {
 		$the_parent = $pagenow;
 	}
-	if ( ! $page_hook = get_plugin_page_hook( $plugin_page, $the_parent ) ) {
+
+	$page_hook = get_plugin_page_hook( $plugin_page, $the_parent );
+	if ( ! $page_hook ) {
 		$page_hook = get_plugin_page_hook( $plugin_page, $plugin_page );
 
 		// Back-compat for plugins using add_management_page().
@@ -225,7 +228,7 @@ if ( isset( $plugin_page ) ) {
 		 *
 		 * @since 2.1.0
 		 */
-		do_action( "load-{$page_hook}" );
+		do_action( "load-{$page_hook}" ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		if ( ! isset( $_GET['noheader'] ) ) {
 			require_once( ABSPATH . 'wp-admin/admin-header.php' );
 		}
@@ -233,7 +236,18 @@ if ( isset( $plugin_page ) ) {
 		/**
 		 * Used to call the registered callback for a plugin screen.
 		 *
-		 * @ignore
+		 * This hook uses a dynamic hook name, `$page_hook`, which refers to a mixture of plugin
+		 * page information including:
+		 * 1. The page type. If the plugin page is registered as a submenu page, such as for
+		 *    Settings, the page type would be 'settings'. Otherwise the type is 'toplevel'.
+		 * 2. A separator of '_page_'.
+		 * 3. The plugin basename minus the file extension.
+		 *
+		 * Together, the three parts form the `$page_hook`. Citing the example above,
+		 * the hook name used would be 'settings_page_pluginbasename'.
+		 *
+		 * @see get_plugin_page_hook()
+		 *
 		 * @since 1.5.0
 		 */
 		do_action( $page_hook );
@@ -258,7 +272,7 @@ if ( isset( $plugin_page ) ) {
 		 *
 		 * @since 1.5.0
 		 */
-		do_action( "load-{$plugin_page}" );
+		do_action( "load-{$plugin_page}" ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
 		if ( ! isset( $_GET['noheader'] ) ) {
 			require_once( ABSPATH . 'wp-admin/admin-header.php' );
@@ -279,7 +293,7 @@ if ( isset( $plugin_page ) ) {
 	$importer = $_GET['import'];
 
 	if ( ! current_user_can( 'import' ) ) {
-		wp_die( __( 'Sorry, you are not allowed to import content.' ) );
+		wp_die( __( 'Sorry, you are not allowed to import content into this site.' ) );
 	}
 
 	if ( validate_file( $importer ) ) {
@@ -299,7 +313,7 @@ if ( isset( $plugin_page ) ) {
 	 *
 	 * @since 3.5.0
 	 */
-	do_action( "load-importer-{$importer}" );
+	do_action( "load-importer-{$importer}" ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
 	$parent_file  = 'tools.php';
 	$submenu_file = 'import.php';
@@ -348,7 +362,7 @@ if ( isset( $plugin_page ) ) {
 	 *
 	 * @since 2.1.0
 	 */
-	do_action( "load-{$pagenow}" );
+	do_action( "load-{$pagenow}" ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
 	/*
 	 * The following hooks are fired to ensure backward compatibility.
@@ -356,18 +370,18 @@ if ( isset( $plugin_page ) ) {
 	 */
 	if ( $typenow == 'page' ) {
 		if ( $pagenow == 'post-new.php' ) {
-			do_action( 'load-page-new.php' );
+			do_action( 'load-page-new.php' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		} elseif ( $pagenow == 'post.php' ) {
-			do_action( 'load-page.php' );
+			do_action( 'load-page.php' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		}
 	} elseif ( $pagenow == 'edit-tags.php' ) {
 		if ( $taxnow == 'category' ) {
-			do_action( 'load-categories.php' );
+			do_action( 'load-categories.php' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		} elseif ( $taxnow == 'link_category' ) {
-			do_action( 'load-edit-link-categories.php' );
+			do_action( 'load-edit-link-categories.php' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		}
 	} elseif ( 'term.php' === $pagenow ) {
-		do_action( 'load-edit-tags.php' );
+		do_action( 'load-edit-tags.php' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 	}
 }
 
